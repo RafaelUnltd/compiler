@@ -42,8 +42,7 @@ public class SymbolTable {
         symbols.put(",", Tag.Types.SY_COMMA); 		  
         symbols.put("(", Tag.Types.SY_LEFT_PAR); 
         symbols.put(")", Tag.Types.SY_RIGHT_PAR); 
-        symbols.put(";", Tag.Types.SY_SEMICOLON); 
-        
+        symbols.put(";", Tag.Types.SY_SEMICOLON);    
     }
 
     public Boolean hasSymbol(String symbolKey){
@@ -52,5 +51,13 @@ public class SymbolTable {
     
     public Tag.Types getSymbol(String symbolKey) {
         return symbols.get(symbolKey);
+    }
+
+    public Lexeme getLexeme(String symbolKey) {
+        return new Lexeme(symbolKey, symbols.get(symbolKey));
+    }
+
+    public void addSymbol(Lexeme lexeme) {
+        symbols.put(lexeme.getToken(), lexeme.getType());
     }
 }

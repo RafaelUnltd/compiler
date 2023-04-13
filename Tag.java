@@ -44,7 +44,9 @@ public class Tag {
         IDL_INTEGER_CONST,
         IDL_FLOAT_CONST,
         IDL_CHAR_CONST,
-        IDL_LITERAL;
+        IDL_LITERAL,
+
+        VOID_VALUE;
     }
 
     public static String getTypeString(Types type) throws Exception {
@@ -103,6 +105,8 @@ public class Tag {
                 return "IDL_CHAR_CONST";
             case IDL_LITERAL:
                 return "IDL_LITERAL";
+            case VOID_VALUE:
+                return "VOID_VALUE";
             default:
                 throw new Exception("Invalid token type.");
         }

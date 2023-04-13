@@ -7,100 +7,113 @@ public class LexicalAnalyzer {
     private char ch = ' ';
     private FileReader file;
 
-    public LexicalAnalyzer(String fileName) throws FileNotFoundException{
-        try{
-            file = new FileReader (fileName);
-        } catch(FileNotFoundException e){
+    private SymbolTable symbols;
+
+    public LexicalAnalyzer(String fileName) throws FileNotFoundException {
+        try {
+            file = new FileReader(fileName);
+        } catch (FileNotFoundException e) {
             System.out.println("Arquivo não encontrado");
             throw e;
         }
+
+        symbols = new SymbolTable();
     }
 
-    private void readch() throws IOException{
+    private void readch() throws IOException {
         ch = (char) file.read();
     }
 
-    private boolean readch(char c) throws IOException{
+    private boolean readch(char c) throws IOException {
         readch();
-        if (ch != c) return false;
+        if (ch != c)
+            return false;
         ch = ' ';
         return true;
     }
-}
-/* 
 
-public Token scan(br BufferedReader) {
-    boolean persistChar = false;
-    int state = 1;
-
-    int c = 0;
-    char currentChar;
-    String identifierBuffer = ""
-
-    while ((c = br.read()) != -1) {
-        if (persistChar) {
-            persistChar = false;
-        } else {
-            currentChar = (char) c;
-        }
-
-        switch (state) {
-            case 1:
-                switch (currentChar) {
-                    case '!':
-                        state = 2;
-                        break;
-                    case '>':
-                        state = 3;
-                        break;
-                    case '$':
-                        identifierBuffer += "$"
-                        state = 4;
-                        break;
-                    default:
-                        throw new LexicalError("Not a valid character");
-                        break;
-                }
-                break;
-            case 2:
-                switch (currentChar) {
-                    case '=':
-                        this.registerToken("!=");
-                        state = 1;
-                        break;
-                    default:
-                        this.registerToken("!");
-                        state = 1;
-                        break;
-                }
-                break;
-            case 3:
-                switch (currentChar) {
-                    case '>':
-                        this.registerToken(">>");
-                        state = 1;
-                        break;
-                    default:
-                        this.registerToken(">");
-                        state = 1;
-                        break;
-                }
-                break;
-            case 4:
-                if (this.isLetter(currentChar)) {
-                    state = 5;
-                } else {
-                    throw new LexicalError("Error while recognizing identifier");
-                }
-                break;
-            case 5:
-                if (this.isLetter(currentChar) || this.isDigit(currentChar)) {
-                    identifierBuffer += currentChar;
-                } else {
-                    this.registerToken(identifierBuffer);
-                    state = 1;
-                }
+    public Lexeme scan() throws IOException {
+        for (;; readch()) {
+            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b')
+                continue;
+            else if (ch == '\n')
+                line++;
+            else
                 break;
         }
+        switch (ch) {
+            case '&':
+                if (readch('&'))
+                    return symbols.getLexeme("&&");
+            case '!':
+                if (readch('!'))
+                    return symbols.getLexeme("!");
+            case '|':
+                if (readch('|'))
+                    return symbols.getLexeme("||");
+            case '=':
+                if (readch('='))
+                    return symbols.getLexeme("==");
+                else
+                    return symbols.getLexeme("=");
+            case '<':
+                if (readch('='))
+                    return symbols.getLexeme("<=");
+                else if (readch('>'))
+                    return symbols.getLexeme("<>");
+                else
+                    return symbols.getLexeme("<");
+            case '>':
+                if (readch('='))
+                    return symbols.getLexeme(">=");
+                else
+                    return symbols.getLexeme(">");
+            case '+':
+                return symbols.getLexeme("+");
+            case '*':
+                return symbols.getLexeme("*");
+            case '/':
+                return symbols.getLexeme("/");
+            case '-':
+                return symbols.getLexeme("-");
+            case ',':
+                return symbols.getLexeme(",");
+            case '(':
+                return symbols.getLexeme("(");
+            case ')':
+                return symbols.getLexeme(")");
+            case ';':
+                return symbols.getLexeme(";");
+            
+        }
+        // Números
+        if (Character.isDigit(ch)) {
+            int value = 0;
+            do {
+                value = 10 * value + Character.digit(ch, 10);
+                readch();
+            } while (Character.isDigit(ch));
+            return new Lexeme(Integer.toString(value), Tag.Types.IDL_INTEGER_CONST);
+        }
+        // Identificadores
+        if (Character.isLetter(ch)) {
+            StringBuffer sb = new StringBuffer();
+            do {
+                sb.append(ch);
+                readch();
+            } while (Character.isLetterOrDigit(ch));
+            String s = sb.toString();
+            Lexeme w = symbols.getLexeme(s);
+            if (w != null)
+                return w; // palavra já existe na HashTable
+            w = new Lexeme(s, Tag.Types.IDL_LITERAL);
+            symbols.addSymbol(w);
+            return w;
+        }
+
+        // Caracteres não especificados
+        Lexeme t = new Lexeme(ch + "", Tag.Types.VOID_VALUE);
+        ch = ' ';
+        return t;
     }
-}*/
+}
