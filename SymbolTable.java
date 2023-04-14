@@ -28,20 +28,23 @@ public class SymbolTable {
         symbols.put("program", Tag.Types.RW_PROGRAM);
         symbols.put("begin", Tag.Types.RW_BEGIN);
         symbols.put("end", Tag.Types.RW_END);
-        symbols.put("exit", Tag.Types.RW_EXIT);
         symbols.put("int", Tag.Types.RW_INT);
         symbols.put("float", Tag.Types.RW_FLOAT);
-        symbols.put("print", Tag.Types.RW_PRINT); 
-        symbols.put("scan", Tag.Types.RW_SCAN); 
-        symbols.put("start", Tag.Types.RW_START); 
-        symbols.put("string", Tag.Types.RW_STRING); 
+        symbols.put("char", Tag.Types.RW_CHAR);
+        symbols.put("write", Tag.Types.RW_WRITE); 
+        symbols.put("read", Tag.Types.RW_READ);   
         symbols.put("then", Tag.Types.RW_THEN); 
         symbols.put("while", Tag.Types.RW_WHILE);
+        symbols.put("is", Tag.Types.RW_IS);
+        symbols.put("repeat", Tag.Types.RW_REPEAT);
+        symbols.put("until", Tag.Types.RW_UNTIL);
 
         symbols.put("=", Tag.Types.SY_ASSIGN); 
         symbols.put(",", Tag.Types.SY_COMMA); 		  
         symbols.put("(", Tag.Types.SY_LEFT_PAR); 
         symbols.put(")", Tag.Types.SY_RIGHT_PAR); 
+        symbols.put("}", Tag.Types.SY_LEFT_BRA); 
+        symbols.put("}", Tag.Types.SY_RIGHT_BRA); 
         symbols.put(";", Tag.Types.SY_SEMICOLON);    
     }
 
@@ -54,7 +57,13 @@ public class SymbolTable {
     }
 
     public Lexeme getLexeme(String symbolKey) {
-        return new Lexeme(symbolKey, symbols.get(symbolKey));
+        Tag.Types obj = symbols.get(symbolKey);
+
+        if (obj == null) {
+            return null;
+        }
+
+        return new Lexeme(symbolKey, obj);
     }
 
     public void addSymbol(Lexeme lexeme) {

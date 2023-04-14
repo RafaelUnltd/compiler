@@ -32,58 +32,65 @@ public class LexicalAnalyzer {
         return true;
     }
 
+    private Lexeme getLexemeAndReadNext(String key) throws IOException {
+        readch();
+        return symbols.getLexeme(key);
+    }
+
     public Lexeme scan() throws IOException {
         for (;; readch()) {
-            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b')
+            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b'){
                 continue;
+            }
             else if (ch == '\n')
                 line++;
             else
                 break;
         }
+        
         switch (ch) {
             case '&':
                 if (readch('&'))
-                    return symbols.getLexeme("&&");
+                    return this.getLexemeAndReadNext("&&");
             case '!':
                 if (readch('!'))
-                    return symbols.getLexeme("!");
+                    return this.getLexemeAndReadNext("!");
             case '|':
                 if (readch('|'))
-                    return symbols.getLexeme("||");
+                    return this.getLexemeAndReadNext("||");
             case '=':
                 if (readch('='))
-                    return symbols.getLexeme("==");
+                    return this.getLexemeAndReadNext("==");
                 else
-                    return symbols.getLexeme("=");
+                    return this.getLexemeAndReadNext("=");
             case '<':
                 if (readch('='))
-                    return symbols.getLexeme("<=");
+                    return this.getLexemeAndReadNext("<=");
                 else if (readch('>'))
-                    return symbols.getLexeme("<>");
+                    return this.getLexemeAndReadNext("<>");
                 else
-                    return symbols.getLexeme("<");
+                    return this.getLexemeAndReadNext("<");
             case '>':
                 if (readch('='))
-                    return symbols.getLexeme(">=");
+                    return this.getLexemeAndReadNext(">=");
                 else
-                    return symbols.getLexeme(">");
+                    return this.getLexemeAndReadNext(">");
             case '+':
-                return symbols.getLexeme("+");
+                return this.getLexemeAndReadNext("+");
             case '*':
-                return symbols.getLexeme("*");
+                return this.getLexemeAndReadNext("*");
             case '/':
-                return symbols.getLexeme("/");
+                return this.getLexemeAndReadNext("/");
             case '-':
-                return symbols.getLexeme("-");
+                return this.getLexemeAndReadNext("-");
             case ',':
-                return symbols.getLexeme(",");
+                return this.getLexemeAndReadNext(",");
             case '(':
-                return symbols.getLexeme("(");
+                return this.getLexemeAndReadNext("(");
             case ')':
-                return symbols.getLexeme(")");
+                return this.getLexemeAndReadNext(")");
             case ';':
-                return symbols.getLexeme(";");
+                return this.getLexemeAndReadNext(";");
             
         }
         // Números
@@ -104,11 +111,33 @@ public class LexicalAnalyzer {
             } while (Character.isLetterOrDigit(ch));
             String s = sb.toString();
             Lexeme w = symbols.getLexeme(s);
-            if (w != null)
-                return w; // palavra já existe na HashTable
-            w = new Lexeme(s, Tag.Types.IDL_LITERAL);
-            symbols.addSymbol(w);
+            if(w == null){
+                w = new Lexeme(s, Tag.Types.IDL_ID);
+                symbols.addSymbol(w);
+            }
             return w;
+        }
+
+        if (ch == '{') {
+            StringBuffer sb = new StringBuffer();
+            readch();
+            while (ch != '}') {
+                sb.append(ch);
+                readch();
+            };
+            readch();
+            String s = sb.toString();
+            return new Lexeme(s, Tag.Types.IDL_LITERAL);
+        }
+
+        if (ch == '\'') {
+            readch();
+            char charBuffer = ch;
+            readch();
+            if (ch == '\'') {
+                readch();
+                return new Lexeme(charBuffer + "", Tag.Types.IDL_CHAR_CONST);
+            }
         }
 
         // Caracteres não especificados

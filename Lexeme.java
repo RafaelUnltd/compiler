@@ -20,7 +20,7 @@ public class Lexeme {
         String lexemeString = "<" + token + ", ";
 
         try {
-            lexemeString += Tag.getTypeString(type) + ">";
+            lexemeString += type + ">";
         } catch (Exception e) {
             lexemeString += "INVALID>";
         }

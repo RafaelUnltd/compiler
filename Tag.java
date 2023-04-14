@@ -23,20 +23,23 @@ public class Tag {
         RW_PROGRAM,
         RW_BEGIN,
         RW_END,
-        RW_EXIT,
         RW_INT,
         RW_FLOAT,
-        RW_PRINT,
-        RW_SCAN,
-        RW_START,
-        RW_STRING,
+        RW_CHAR,
+        RW_WRITE,
+        RW_READ,
         RW_THEN,
         RW_WHILE,
+        RW_IS,
+        RW_REPEAT,
+        RW_UNTIL,
         /*symbols*/
         SY_ASSIGN,        
         SY_COMMA,		  
         SY_LEFT_PAR,	  
-        SY_RIGHT_PAR,	  
+        SY_RIGHT_PAR,	
+        SY_LEFT_BRA,	  
+        SY_RIGHT_BRA,	  
         SY_SEMICOLON,     
 	    SY_COLON,		  
 
@@ -47,68 +50,5 @@ public class Tag {
         IDL_LITERAL,
 
         VOID_VALUE;
-    }
-
-    public static String getTypeString(Types type) throws Exception {
-        switch (type) {
-            case AO_ADD:
-                return "ADD";
-            case AO_DIV:
-                return "DIVIDED";
-            case AO_MUL:
-                return "MULTIPLIED";
-            case AO_SUB:
-                return "SUBTRACTED";
-            case LO_NOT:
-                return "NOT";
-            case LO_OR:
-                return "OR";
-            case LO_AND:
-                return "AND";
-            case RO_EQUAL:
-                return "EQUAL";
-            case RO_GREATER_EQUAL:
-                return "GREATER_EQUAL";
-            case RO_LOWER_EQUAL:
-                return "LOWER_EQUAL";
-            case RO_GREATER:
-                return "GREATER";
-            case RO_LOWER:
-                return "LOWER";
-            case RO_NOT_EQUAL:
-                return "NOT_EQUAL";
-            case RW_DO:
-                return "DO";
-            case RW_IF:
-                return "IF";
-            case RW_FLOAT:
-                return "FLOAT";
-            case RW_PRINT:
-                return "PRINT";
-            case RW_SCAN:
-                return "SCAN";
-            case RW_START:
-                return "START";
-            case RW_STRING:
-                return "STRING";
-            case RW_THEN:
-                return "THEN";
-            case RW_WHILE:
-                return "WHILE";
-            case IDL_ID:
-                return "ID";
-            case IDL_INTEGER_CONST:
-                return "INTEGER_CONST";
-            case IDL_FLOAT_CONST:
-                return "IDL_FLOAT_CONST";
-            case IDL_CHAR_CONST:
-                return "IDL_CHAR_CONST";
-            case IDL_LITERAL:
-                return "IDL_LITERAL";
-            case VOID_VALUE:
-                return "VOID_VALUE";
-            default:
-                throw new Exception("Invalid token type.");
-        }
     }
 }
