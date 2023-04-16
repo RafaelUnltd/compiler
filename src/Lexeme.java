@@ -1,3 +1,5 @@
+package src;
+
 public class Lexeme {
     private String token;
     private Tag.Types type;

@@ -1,3 +1,5 @@
+package src;
+
 public class Tag {
     public enum Types {
         /* Arithmetic ops. */
