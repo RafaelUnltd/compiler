@@ -1,5 +1,3 @@
-package src;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -82,7 +80,19 @@ public class LexicalAnalyzer {
             case '*':
                 return this.getLexemeAndReadNext("*");
             case '/':
-                return this.getLexemeAndReadNext("/");
+                if (readch('*')) {
+                    char ch1 = ' ';
+                    char ch2 = ' ';
+                    do {
+                        readch();
+                        ch1 = ch;
+                        readch();
+                        ch2 = ch;
+                    } while(ch1 != '*' && ch2 != '/');
+                    return this.scan();
+                }
+                else
+                    return symbols.getLexeme("/");
             case '-':
                 return this.getLexemeAndReadNext("-");
             case ',':
