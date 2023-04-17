@@ -43,7 +43,7 @@ public class SymbolTable {
         symbols.put(",", Tag.Types.SY_COMMA); 		  
         symbols.put("(", Tag.Types.SY_LEFT_PAR); 
         symbols.put(")", Tag.Types.SY_RIGHT_PAR); 
-        symbols.put("}", Tag.Types.SY_LEFT_BRA); 
+        symbols.put("{", Tag.Types.SY_LEFT_BRA); 
         symbols.put("}", Tag.Types.SY_RIGHT_BRA); 
         symbols.put(";", Tag.Types.SY_SEMICOLON);    
     }
