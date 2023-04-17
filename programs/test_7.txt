@@ -1,0 +1,13 @@
+program teste7
+    correct is boolean; /* Erro pois o tipo boolean não existe */
+    question is string; /* Erro pois o tipo string não existe */
+begin
+    write (question);
+    read (answer); /* Tentativa de leitura de variável não declarada */
+
+    /* Output para o usuário */
+    write ({A resposta para a pergunta });
+    write (question);
+    write ({é: });
+    write (answer);
+end

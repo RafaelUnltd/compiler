@@ -1,16 +1,17 @@
-programa teste6
-    a, b is int;
-    result is int;
-    a,x is float;
-    c is char;
+program teste6
+    a, b, c is int;
+    delta is int;
 begin
-    a = 12a;
-    x = 12.;
-    c = 'b';
+    /* Leitura da variável a */
     read (a);
+
+    /* Leitura da variável b */
     read (b);
-    read (c)
-    result = (a*b + 1) / (c+2);
-    write {Resultado: };
-    write (result);
-end.
+
+    /* Calculo do delta da equacao */
+    delta = (b * b) - (4 * a * c);
+
+    /* Output para o usuário */
+    write ({O delta da equacao e: });
+    write (delta);
+end

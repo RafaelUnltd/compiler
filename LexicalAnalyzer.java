@@ -81,14 +81,15 @@ public class LexicalAnalyzer {
                 return this.getLexemeAndReadNext("*");
             case '/':
                 if (readch('*')) {
-                    char ch1 = ' ';
-                    char ch2 = ' ';
+                    char ch1 = ch;
+                    readch();
+                    char ch2 = ch;
                     do {
-                        readch();
-                        ch1 = ch;
+                        ch1 = ch2;
                         readch();
                         ch2 = ch;
                     } while(ch1 != '*' && ch2 != '/');
+                    readch();
                     return this.scan();
                 }
                 else

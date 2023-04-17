@@ -1,4 +1,5 @@
 create:
+	rm Compiler.jar
 	javac Compiler.java
 	jar cf Compiler.jar *.class
 	rm -rf *.class
