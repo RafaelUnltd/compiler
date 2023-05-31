@@ -12,8 +12,8 @@ public class SymbolTable {
         symbols.put("/", Tag.Types.AO_DIV);
 
         symbols.put("!", Tag.Types.LO_NOT);
-        symbols.put("&&", Tag.Types.LO_OR);
-        symbols.put("||", Tag.Types.LO_AND); 
+        symbols.put("&&", Tag.Types.LO_AND);
+        symbols.put("||", Tag.Types.LO_OR); 
 
         symbols.put("==", Tag.Types.RO_EQUAL);
         symbols.put(">=", Tag.Types.RO_GREATER_EQUAL);

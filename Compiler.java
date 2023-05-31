@@ -8,6 +8,7 @@ public class Compiler {
 
         try {
             lexAnalyzer = new LexicalAnalyzer(args[0]);
+            syntAnalyzer = new SyntaticAnalyzer(lexAnalyzer);
         } catch (FileNotFoundException e) {
             System.out.println("Erro ao procurar arquivo.");
             return;
