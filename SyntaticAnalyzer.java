@@ -1,32 +1,37 @@
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 public class SyntaticAnalyzer {
     private LexicalAnalyzer lexical;
     private Lexeme currentLexeme;
 
-    public LexicalAnalyzer(LexicalAnalyzer lexical) {
+    public SyntaticAnalyzer(LexicalAnalyzer lexical) {
         this.lexical = lexical;
+        this.advance();
     }
 
     public void start() {
+        Tag.Types[] ends = {Tag.Types.RW_END};
         this.eat(Tag.Types.RW_PROGRAM);
         this.eat(Tag.Types.IDL_ID);
         // Declaration Statements until RW_BEGIN
         this.readDeclarationsList();
         this.eat(Tag.Types.RW_BEGIN);
-        this.readStatementsList();
+        this.readStatementsList(ends);
         // Statement List until RW_END
         this.eat(Tag.Types.RW_END);
     }
 
     private void advance() {
-        this.currentLexeme = this.lexical.scan();
+        try {
+            this.currentLexeme = this.lexical.scan();
+        } catch (IOException e) {
+            System.out.println("Erro ao chamar método de Scan");
+            System.exit(1);
+        }
     }
 
     private void readDeclarationsList() {
-        if (currentLexeme.getType == Tag.Types.RW_BEGIN) {
+        if (this.currentLexeme.getType() == Tag.Types.RW_BEGIN) {
             return;
         }
         this.readDeclaration();
@@ -38,13 +43,13 @@ public class SyntaticAnalyzer {
         this.eat(Tag.Types.RW_IS);
         
         switch(this.currentLexeme.getType()) {
-            case Tag.Types.RW_INT:
+            case RW_INT:
                 this.eat(Tag.Types.RW_INT);
                 break;
-            case Tag.Types.RW_FLOAT:
+            case RW_FLOAT:
                 this.eat(Tag.Types.RW_FLOAT);
                 break;
-            case Tag.Types.RW_CHAR:
+            case RW_CHAR:
                 this.eat(Tag.Types.RW_CHAR);
                 break;
             default:
@@ -62,26 +67,46 @@ public class SyntaticAnalyzer {
         }
     }
 
+    private void readStatementsList(Tag.Types[] expectedEnds) {
+        boolean reachedEnd = false;
+
+        for (int i = 0; i < expectedEnds.length; i++) {
+            if (this.currentLexeme.getType() == expectedEnds[i]) {
+                reachedEnd = true;
+                break;
+            }
+        }
+
+        if (reachedEnd) {
+            return;
+        }
+
+        this.readStatement();
+        this.readStatementsList(expectedEnds);
+    }
+
     private void readStatement() {
-        switch (this.currentLexeme.getType()){
-            case Tag.Types.IDL_ID:
+        switch (this.currentLexeme.getType()) {
+            case IDL_ID:
                 this.readAssignmentStatement();
                 break;
-            case Tag.Types.RW_IF:
+            case RW_IF:
                 this.readIfStatement();
                 break;
-            case Tag.Types.RW_WHILE:
+            case RW_WHILE:
                 this.readWhileStatement();
                 break;
-            case Tag.Types.RW_REPEAT:
+            case RW_REPEAT:
                 this.readRepeatStatement();
                 break;
-            case Tag.Types.RW_READ:
+            case RW_READ:
                 this.readReadStatement();
                 break;
-            case Tag.Types.RW_WRITE:
+            case RW_WRITE:
                 this.readWriteStatement();
                 break;
+            default:
+                this.showSyntaticError();
         }
     }
 
@@ -133,22 +158,22 @@ public class SyntaticAnalyzer {
 
     private void readRelOp () {
         switch (this.currentLexeme.getType()) {
-            case Tag.Types.RO_EQUAL:
+            case RO_EQUAL:
                 this.eat(Tag.Types.RO_EQUAL);
                 break;
-            case Tag.Types.RO_GREATER_EQUAL:
+            case RO_GREATER_EQUAL:
                 this.eat(Tag.Types.RO_GREATER_EQUAL);
                 break;
-            case Tag.Types.RO_LOWER_EQUAL:
+            case RO_LOWER_EQUAL:
                 this.eat(Tag.Types.RO_LOWER_EQUAL);
                 break;
-            case Tag.Types.RO_GREATER:
+            case RO_GREATER:
                 this.eat(Tag.Types.RO_GREATER);
                 break;
-            case Tag.Types.RO_LOWER:
+            case RO_LOWER:
                 this.eat(Tag.Types.RO_LOWER);
                 break;
-            case Tag.Types.RO_NOT_EQUAL:
+            case RO_NOT_EQUAL:
                 this.eat(Tag.Types.RO_NOT_EQUAL);
                 break;
             default:
@@ -159,13 +184,13 @@ public class SyntaticAnalyzer {
 
     private void readAddOp () {
         switch (this.currentLexeme.getType()) {
-            case Tag.Types.AO_ADD:
+            case AO_ADD:
                 this.eat(Tag.Types.AO_ADD);
                 break;
-            case Tag.Types.AO_SUB:
+            case AO_SUB:
                 this.eat(Tag.Types.AO_SUB);
                 break;
-            case Tag.Types.LO_OR:
+            case LO_OR:
                 this.eat(Tag.Types.LO_OR);
                 break;
             default:
@@ -176,13 +201,13 @@ public class SyntaticAnalyzer {
 
     private void readMulOp () {
         switch (this.currentLexeme.getType()) {
-            case Tag.Types.AO_MUL:
+            case AO_MUL:
                 this.eat(Tag.Types.AO_MUL);
                 break;
-            case Tag.Types.AO_DIV:
+            case AO_DIV:
                 this.eat(Tag.Types.AO_DIV);
                 break;
-            case Tag.Types.LO_AND:
+            case LO_AND:
                 this.eat(Tag.Types.LO_AND);
                 break;
             default:
@@ -193,18 +218,18 @@ public class SyntaticAnalyzer {
 
     private void readFactorA () {
         switch (this.currentLexeme.getType()) {
-            case Tag.Types.IDL_ID:
-            case Tag.Types.SY_LEFT_PAR:
-            case Tag.Types.IDL_INTEGER_CONST:
-            case Tag.Types.IDL_FLOAT_CONST:
-            case Tag.Types.IDL_CHAR_CONST:
+            case IDL_ID:
+            case SY_LEFT_PAR:
+            case IDL_INTEGER_CONST:
+            case IDL_FLOAT_CONST:
+            case IDL_CHAR_CONST:
                 this.readFactor();
                 break;
-            case Tag.Types.LO_NOT:
+            case LO_NOT:
                 this.eat(Tag.Types.LO_NOT);
                 this.readFactor();
                 break;
-            case Tag.Types.AO_SUB:
+            case AO_SUB:
                 this.eat(Tag.Types.AO_SUB);
                 this.readFactor();
                 break;
@@ -216,21 +241,21 @@ public class SyntaticAnalyzer {
 
     private void readFactor () {
         switch (this.currentLexeme.getType()) {
-            case Tag.Types.IDL_ID:
+            case IDL_ID:
                 this.eat(Tag.Types.IDL_ID);
                 break;
-            case Tag.Types.SY_LEFT_PAR:
+            case SY_LEFT_PAR:
                 this.eat(Tag.Types.SY_LEFT_PAR);
                 this.readExpression();
                 this.eat(Tag.Types.SY_RIGHT_PAR);
                 break;
-            case Tag.Types.IDL_INTEGER_CONST:
+            case IDL_INTEGER_CONST:
                 this.eat(Tag.Types.IDL_INTEGER_CONST);
                 break;
-            case Tag.Types.IDL_FLOAT_CONST:
+            case IDL_FLOAT_CONST:
                 this.eat(Tag.Types.IDL_FLOAT_CONST);
                 break;
-            case Tag.Types.IDL_CHAR_CONST:
+            case IDL_CHAR_CONST:
                 this.eat(Tag.Types.IDL_CHAR_CONST);
                 break;
             default:
@@ -239,17 +264,35 @@ public class SyntaticAnalyzer {
         }
     }
 
-    private void readIfStatement(){
+    private void readIfStatement() {
+        Tag.Types[] elseEnds = {Tag.Types.RW_ELSE, Tag.Types.RW_END};
+        Tag.Types[] ends = {Tag.Types.RW_END};
         this.eat(Tag.Types.RW_IF);
         this.readExpression();
+        this.eat(Tag.Types.RW_THEN);
+        this.readStatementsList(elseEnds);
+        if (this.currentLexeme.getType() == Tag.Types.RW_ELSE) {
+            this.eat(Tag.Types.RW_ELSE);
+            this.readStatementsList(ends);
+        }
+        this.eat(Tag.Types.RW_END);
     }
 
     private void readWhileStatement(){
-
+        Tag.Types[] ends = {Tag.Types.RW_END};
+        this.eat(Tag.Types.RW_WHILE);
+        this.readExpression();
+        this.eat(Tag.Types.RW_DO);
+        this.readStatementsList(ends);
+        this.eat(Tag.Types.RW_END);
     }
 
     private void readRepeatStatement(){
-
+        Tag.Types[] ends = {Tag.Types.RW_UNTIL};
+        this.eat(Tag.Types.RW_REPEAT);
+        this.readStatementsList(ends);
+        this.eat(Tag.Types.RW_UNTIL);
+        this.readExpression();
     }
 
     private void readReadStatement(){
@@ -257,19 +300,26 @@ public class SyntaticAnalyzer {
         this.eat(Tag.Types.SY_LEFT_PAR);
         this.eat(Tag.Types.IDL_ID);
         this.eat(Tag.Types.SY_RIGHT_PAR);
+        this.eat(Tag.Types.SY_SEMICOLON);
     }
 
     private void readWriteStatement(){
         this.eat(Tag.Types.RW_WRITE);
         this.eat(Tag.Types.SY_LEFT_PAR);
-        
-        this.currentLexeme.getType() == Tag.Types.IDL_LITERAL ?  this.eat(Tag.Types.IDL_LITERAL) : this.readSimpleExpression();
+
+        if (this.currentLexeme.getType() == Tag.Types.IDL_LITERAL) {
+            this.eat(Tag.Types.IDL_LITERAL);
+        } else {
+            this.readSimpleExpression();
+        }
 
         this.eat(Tag.Types.SY_RIGHT_PAR);
+        this.eat(Tag.Types.SY_SEMICOLON);
     }
     
     private void eat(Tag.Types type) {
         if (this.currentLexeme.getType() == type) {
+            System.out.println("Lendo " + this.currentLexeme.toString());
             this.advance();
         } else {
             this.showSyntaticError();
@@ -278,5 +328,6 @@ public class SyntaticAnalyzer {
 
     private void showSyntaticError() {
         System.out.println("Erro sintático inesperado");
+        System.exit(0);
     }
 }
