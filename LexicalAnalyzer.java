@@ -64,6 +64,7 @@ public class LexicalAnalyzer {
                 else
                     return this.getLexemeAndReadNext("=");
             case '<':
+                
                 if (readch('='))
                     return this.getLexemeAndReadNext("<=");
                 else if (readch('>'))
@@ -74,7 +75,7 @@ public class LexicalAnalyzer {
                 if (readch('='))
                     return this.getLexemeAndReadNext(">=");
                 else
-                    return this.getLexemeAndReadNext(">");
+                    return symbols.getLexeme(">");
             case '+':
                 return this.getLexemeAndReadNext("+");
             case '*':

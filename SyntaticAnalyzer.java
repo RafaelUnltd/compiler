@@ -53,7 +53,7 @@ public class SyntaticAnalyzer {
                 this.eat(Tag.Types.RW_CHAR);
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperado 'int', 'float' ou 'char'. Encontrado '" + this.currentLexeme.getToken() + "'");
         }
 
         this.eat(Tag.Types.SY_SEMICOLON);
@@ -106,7 +106,7 @@ public class SyntaticAnalyzer {
                 this.readWriteStatement();
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperado 'identificador', 'if', 'while', 'repeat', 'read' ou 'write'. Encontrado '" + this.currentLexeme.getToken() + "'");
         }
     }
 
@@ -119,7 +119,7 @@ public class SyntaticAnalyzer {
 
     private void readExpression () {
         this.readSimpleExpression();
-        while (
+        if (
             this.currentLexeme.getType() == Tag.Types.RO_EQUAL ||
             this.currentLexeme.getType() == Tag.Types.RO_GREATER_EQUAL ||
             this.currentLexeme.getType() == Tag.Types.RO_LOWER_EQUAL ||
@@ -177,7 +177,7 @@ public class SyntaticAnalyzer {
                 this.eat(Tag.Types.RO_NOT_EQUAL);
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperado '==', '>=', '<=', '>', '<' ou '<>'. Encontrado '" + this.currentLexeme.getToken() + "'");
                 break;
         }
     }
@@ -194,7 +194,7 @@ public class SyntaticAnalyzer {
                 this.eat(Tag.Types.LO_OR);
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperado '+', '-' ou '||'. Encontrado '" + this.currentLexeme.getToken() + "'");
                 break;
         }
     }
@@ -211,7 +211,7 @@ public class SyntaticAnalyzer {
                 this.eat(Tag.Types.LO_AND);
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperado '*', '/' ou '&&'. Encontrado '" + this.currentLexeme.getToken() + "'");
                 break;
         }
     }
@@ -234,7 +234,7 @@ public class SyntaticAnalyzer {
                 this.readFactor();
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperados um 'identificador', 'constante', 'separador ()' ou 'operador - / !'. Encontrado '" + this.currentLexeme.getToken() + "'");
                 break;
         }
     }
@@ -259,7 +259,7 @@ public class SyntaticAnalyzer {
                 this.eat(Tag.Types.IDL_CHAR_CONST);
                 break;
             default:
-                this.showSyntaticError();
+                this.showSyntaticError("Esperados um 'identificador', 'constante' ou 'separador ()'. Encontrado '" + this.currentLexeme.getToken() + "'");
                 break;
         }
     }
@@ -322,12 +322,13 @@ public class SyntaticAnalyzer {
             System.out.println("Lendo " + this.currentLexeme.toString());
             this.advance();
         } else {
-            this.showSyntaticError();
+            
+            this.showSyntaticError("Esperado '" + type + "', encontrado '" + this.currentLexeme.getToken()+"'");
         }
     }
 
-    private void showSyntaticError() {
-        System.out.println("Erro sintático inesperado");
+    private void showSyntaticError(String msg) {
+        System.out.println("Erro sintático na linha " + LexicalAnalyzer.line + ": " + msg);
         System.exit(0);
     }
 }
