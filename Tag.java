@@ -49,6 +49,7 @@ public class Tag {
         IDL_CHAR_CONST,
         IDL_LITERAL,
 
+        PARENT_NODE,
         VOID_VALUE;
     }
 }
