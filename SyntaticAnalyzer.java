@@ -7,10 +7,10 @@ class Node {
 
     public Node(Tag.Types type) {
         this.type = type;
+        this.children = new ArrayList<Node>();
     }
 
   public void addChildren(Tag.Types type) {
-    this.children = new ArrayList<Node>();
     this.children.add(new Node(type));
   }
 
@@ -23,15 +23,21 @@ class Node {
   public Tag.Types getType() {
     return this.type;
   }
+
+  public ArrayList<Node> getChildren() {
+    return this.children;
+  }
 }
 
 public class SyntaticAnalyzer {
     private LexicalAnalyzer lexical;
+    private SemanticAnalyzer semantic;
     private Lexeme currentLexeme;
     private Node root;
 
-    public SyntaticAnalyzer(LexicalAnalyzer lexical) {
+    public SyntaticAnalyzer(LexicalAnalyzer lexical, SemanticAnalyzer semantic) {
         this.lexical = lexical;
+        this.semantic = semantic;
         this.root = new Node(Tag.Types.PARENT_NODE);
         this.advance();
     }
@@ -52,6 +58,7 @@ public class SyntaticAnalyzer {
         // Statement List until RW_END
         this.eat(Tag.Types.RW_END);
         this.root.addChildren(Tag.Types.RW_END);
+        this.semantic.start(this.root);
     }
 
     private void advance() {
@@ -79,7 +86,6 @@ public class SyntaticAnalyzer {
     private Node readDeclaration() {
         Node rootDeclaration = new Node(Tag.Types.PARENT_NODE);
         Node identifierListNode = this.readIdentifierList();
-        System.out.println(identifierListNode);
         rootDeclaration.addChildren(identifierListNode);
 
         this.eat(Tag.Types.RW_IS);
@@ -170,7 +176,7 @@ public class SyntaticAnalyzer {
                 break;
             case RW_WRITE:
                 Node writeStatementNode = this.readWriteStatement();
-                writeStatementNode.addChildren(writeStatementNode);
+                rootStatement.addChildren(writeStatementNode);
                 break;
             default:
                 this.showSyntaticError("Esperado 'identificador', 'if', 'while', 'repeat', 'read' ou 'write'. Encontrado '" + this.currentLexeme.getToken() + "'");

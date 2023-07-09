@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 public class Compiler {
     private static LexicalAnalyzer lexAnalyzer;
     private static SyntaticAnalyzer synAnalyzer;
+    private static SemanticAnalyzer semAnalyzer;
 
     public static void main(String[] args) {
 
@@ -13,7 +14,8 @@ public class Compiler {
             return;
         }
 
-        synAnalyzer = new SyntaticAnalyzer(lexAnalyzer);
+        semAnalyzer = new SemanticAnalyzer();
+        synAnalyzer = new SyntaticAnalyzer(lexAnalyzer, semAnalyzer);
         synAnalyzer.start();
     }
 }
